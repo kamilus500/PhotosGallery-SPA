@@ -1,4 +1,5 @@
 using PhotosGallerySPA.Infrastructure.Extensions;
+using PhotosGallerySPA.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -20,6 +21,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+
+app.UseMiddleware<ErrorMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

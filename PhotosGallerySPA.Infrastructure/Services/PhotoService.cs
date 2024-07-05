@@ -19,88 +19,60 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
         public async Task CreatePhoto(CreatePhotoDto photo)
         {
-            try
+            var newPhoto = new Photo()
             {
-                var newPhoto = new Photo()
-                {
-                    CreationDate = DateTime.UtcNow,
-                    Description = photo.Description,
-                    Title = photo.Title,
-                    UserId = photo.UserId,
-                    Id = Guid.NewGuid().ToString()
-                };
+                CreationDate = DateTime.UtcNow,
+                Description = photo.Description,
+                Title = photo.Title,
+                UserId = photo.UserId,
+                Id = Guid.NewGuid().ToString()
+            };
 
-                if (newPhoto is null)
-                    throw new ArgumentNullException(nameof(newPhoto));
+            if (newPhoto is null)
+                throw new ArgumentNullException(nameof(newPhoto));
 
-                newPhoto.Image = await photo.Image.ToByteArrayAsync();
+            newPhoto.Image = await photo.Image.ToByteArrayAsync();
 
-                await _dbContext.Photos.AddAsync(newPhoto);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await _dbContext.Photos.AddAsync(newPhoto);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeletePhoto(string id)
         {
-            try
-            {
-                var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
+            var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
 
-                if (photo is null)
-                    throw new ArgumentNullException(nameof(photo));
+            if (photo is null)
+                throw new ArgumentNullException(nameof(photo));
 
-                photo.IsDeleted = true;
+            photo.IsDeleted = true;
 
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<PhotoDto> GetPhoto(string id)
         {
-            try
-            {
-                var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
+            var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
 
-                return photo.MapToPhotoDto();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return photo.MapToPhotoDto();
         }
 
         public async Task<IEnumerable<PhotoDto>> GetPhotos()
         {
-            try
+            var userId = _sessionService.GetValue("UserId");
+
+            var photos = await _dbContext.Photos
+                                            .Where(x => x.UserId == userId && !x.IsDeleted)
+                                            .AsNoTracking()
+                                            .ToListAsync();
+
+            var photosDto = new List<PhotoDto>();
+
+            foreach (var photo in photos)
             {
-                var userId = _sessionService.GetValue("UserId");
-
-                var photos = await _dbContext.Photos
-                                                .Where(x => x.UserId == userId && !x.IsDeleted)
-                                                .AsNoTracking()
-                                                .ToListAsync();
-
-                var photosDto = new List<PhotoDto>();
-
-                foreach (var photo in photos)
-                {
-                    photosDto.Add(photo.MapToPhotoDto());
-                }
-
-                return photosDto;
+                photosDto.Add(photo.MapToPhotoDto());
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            return photosDto;
         }
     }
 }

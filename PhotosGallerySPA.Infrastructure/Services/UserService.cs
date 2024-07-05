@@ -14,32 +14,26 @@ namespace PhotosGallerySPA.Infrastructure.Services
         public UserService(ApplicationDbContext dbContext, ISessionService sessionService)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _sessionService = sessionService?? throw new ArgumentNullException(nameof(sessionService));
+            _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
         }
 
         public async Task<bool> Login(LoginRegisterDto loginRegisterDto)
         {
-            try
-            {
-                var user = await _dbContext.Users
-                                            .AsNoTracking()
-                                            .FirstOrDefaultAsync(x => x.Email == loginRegisterDto.Email);
 
-                if (user == null)
-                    throw new ArgumentNullException(nameof(user));
+            var user = await _dbContext.Users
+                                        .AsNoTracking()
+                                        .FirstOrDefaultAsync(x => x.Email == loginRegisterDto.Email);
 
-                if (!PasswordHelper.VerifyPassword(loginRegisterDto.Password, user.PasswordHashed))
-                    return false;
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-                _sessionService.SetValue("UserId", user.Id);
-                _sessionService.SetValue("UserFullName", $"{user.FirstName} {user.LastName}");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
+            if (!PasswordHelper.VerifyPassword(loginRegisterDto.Password, user.PasswordHashed))
                 return false;
-            }
+
+            _sessionService.SetValue("UserId", user.Id);
+            _sessionService.SetValue("UserFullName", $"{user.FirstName} {user.LastName}");
+
+            return true;
         }
 
         public async Task Logout()
@@ -49,24 +43,17 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
         public async Task<bool> Register(LoginRegisterDto loginRegisterDto)
         {
-            try
-            {
-                var user = loginRegisterDto.MapToUser();
+            var user = loginRegisterDto.MapToUser();
 
-                if (user == null)
-                    throw new ArgumentNullException(nameof(user));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-                user.PasswordHashed = PasswordHelper.HashPassword(loginRegisterDto.Password);
+            user.PasswordHashed = PasswordHelper.HashPassword(loginRegisterDto.Password);
 
-                await _dbContext.Users.AddAsync(user);
-                await _dbContext.SaveChangesAsync();
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
 
-                return true;
-            }
-            catch(Exception ex)
-            {
-                return false;
-            }
+            return true;
         }
     }
 }
