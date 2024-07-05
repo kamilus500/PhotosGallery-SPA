@@ -1,0 +1,62 @@
+﻿@using PhotosGallerySPA.Infrastructure.Services.Interfaces
+@inject ISessionService sessionService;
+@{
+    string userId = sessionService.GetValue("UserId");
+}
+
+<h3 class="text-center">Nowe zdjęcie</h3>
+<form id="photoForm" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="Title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <textarea class="form-control" id="Description" name="Description" rows="3" required></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="Image" class="form-label">Image</label>
+        <input type="file" class="form-control" id="Image" name="Image" required />
+    </div>
+
+    <div class="mb-3">
+        <input type="hidden" class="form-control" id="UserId" value="@userId" />
+    </div>
+    <div class="mb-3 text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+<script type="text/javascript">
+    document.getElementById('photoForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let createPhoto = new FormData();
+        createPhoto.append('Title', $('#Title').val());
+        createPhoto.append('Description', $('#Description').val());
+        createPhoto.append('Image', $('#Image')[0].files[0]);
+        createPhoto.append('UserId', $('#UserId').val());
+
+        console.log(createPhoto);
+
+        $.ajax({
+            url: '/Photo/CreatePhoto',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: createPhoto,
+            success: function (result) {
+                if (result === true) {
+                    hideModal();
+                    loadPartial('/Photo/_Photos');
+                } else {
+                    alert('Cos poszlo nie tak');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>

@@ -19,17 +19,17 @@
                     <a class="nav-link text-dark" onclick="loadPartial('/Home/_Index')">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" onclick="loadPartial('/Photo/Photos')">Photos</a>
+                    <a class="nav-link text-dark" onclick="loadPartial('/Photo/_Photos')">Photos</a>
                 </li>
             </ul>
             @if (userId is null) 
             {
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#registerLoginModal" onclick="loadPartialInModal('/User/_Login')" id="LoginBtn">Login</a>
+                        <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#globalModal" onclick="loadPartialInModal('/User/_Login')" id="LoginBtn">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#registerLoginModal" onclick="loadPartialInModal('/User/_Register')" id="RegisterBtn">Register</a>
+                        <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#globalModal" onclick="loadPartialInModal('/User/_Register')" id="RegisterBtn">Register</a>
                     </li>
                 </ul>
             }

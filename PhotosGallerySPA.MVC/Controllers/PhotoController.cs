@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PhotosGallerySPA.Domain.Dtos.Photo;
 using PhotosGallerySPA.Infrastructure.CustomAttributes;
 using PhotosGallerySPA.Infrastructure.Services.Interfaces;
 
@@ -8,12 +9,17 @@ namespace PhotosGallerySPA.MVC.Controllers
     {
         private readonly IPhotoService _photoService;
         public PhotoController(IPhotoService photoService)
-        {
-            _photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
-        }
+            => _photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
 
         [AuthorizationFilter]
-        public async Task<IActionResult> Photos()
+        public async Task<IActionResult> _Photos()
             => PartialView("_Photos", await _photoService.GetPhotos());
+
+        public IActionResult _CreatePhoto()
+            => PartialView("_CreatePhoto");
+
+        [HttpPost]
+        public async Task CreatePhoto([FromForm] CreatePhotoDto createPhotoDto) 
+            => await _photoService.CreatePhoto(createPhotoDto);
     }
 }

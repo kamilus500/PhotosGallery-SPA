@@ -9,7 +9,7 @@ function loadPartialInModal(pathUrl) {
 }
 
 function hideModal() {
-    let modal = document.getElementById('registerLoginModal');
+    let modal = document.getElementById('globalModal');
     modal.style.display = 'none';
 
     let modalBackground = document.querySelector('.modal-backdrop.fade.show');

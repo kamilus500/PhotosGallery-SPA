@@ -62,6 +62,7 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
             var photos = await _dbContext.Photos
                                             .Where(x => x.UserId == userId && !x.IsDeleted)
+                                            .Include(x => x.User)
                                             .AsNoTracking()
                                             .ToListAsync();
 
