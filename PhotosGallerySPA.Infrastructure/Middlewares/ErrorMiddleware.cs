@@ -7,15 +7,14 @@ namespace PhotosGallerySPA.Infrastructure.Middlewares
     public class ErrorMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IErrorService _errorService;
+        //private readonly IErrorService _errorService;
 
-        public ErrorMiddleware(RequestDelegate next, IErrorService errorService)
+        public ErrorMiddleware(RequestDelegate next)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _errorService = errorService ?? throw new ArgumentNullException(nameof(errorService));
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IErrorService errorService)
         {
             try
             {
@@ -31,7 +30,7 @@ namespace PhotosGallerySPA.Infrastructure.Middlewares
                     Exception = ex.Message.ToString()
                 };
 
-                await _errorService.Create(errorTable);
+                await errorService.Create(errorTable);
             }
             
         }

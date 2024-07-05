@@ -17,6 +17,8 @@ namespace PhotosGallerySPA.Infrastructure.Extensions
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            services.AddSignalR();
+
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -29,7 +31,7 @@ namespace PhotosGallerySPA.Infrastructure.Extensions
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISessionService, SessionService>();
-            services.AddTransient<IErrorService, ErrorService>();
+            services.AddScoped<IErrorService, ErrorService>();
         }
     }
 }

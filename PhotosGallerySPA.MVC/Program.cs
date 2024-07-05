@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using PhotosGallerySPA.Infrastructure.Extensions;
+using PhotosGallerySPA.Infrastructure.Hubs;
 using PhotosGallerySPA.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<ErrorMiddleware>();
@@ -27,5 +30,10 @@ app.UseMiddleware<ErrorMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<AccessHub>("/accessDenied");
+});
 
 app.Run();
