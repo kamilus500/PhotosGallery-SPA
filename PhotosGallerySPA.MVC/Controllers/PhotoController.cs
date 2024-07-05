@@ -19,7 +19,11 @@ namespace PhotosGallerySPA.MVC.Controllers
             => PartialView("_CreatePhoto");
 
         [HttpPost]
-        public async Task CreatePhoto([FromForm] CreatePhotoDto createPhotoDto) 
+        public async Task<bool> CreatePhoto([FromForm] CreatePhotoDto createPhotoDto) 
             => await _photoService.CreatePhoto(createPhotoDto);
+
+        [HttpPost]
+        public async Task<bool> DeletePhoto([FromBody] string id)
+            => await _photoService.DeletePhoto(id);
     }
 }

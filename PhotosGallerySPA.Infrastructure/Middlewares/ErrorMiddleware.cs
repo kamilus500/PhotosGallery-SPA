@@ -7,7 +7,6 @@ namespace PhotosGallerySPA.Infrastructure.Middlewares
     public class ErrorMiddleware
     {
         private readonly RequestDelegate _next;
-        //private readonly IErrorService _errorService;
 
         public ErrorMiddleware(RequestDelegate next)
         {

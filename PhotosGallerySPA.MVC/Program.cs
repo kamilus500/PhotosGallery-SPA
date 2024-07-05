@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+using PhotosGallerySPA.Domain.Configs;
 using PhotosGallerySPA.Infrastructure.Extensions;
 using PhotosGallerySPA.Infrastructure.Hubs;
 using PhotosGallerySPA.Infrastructure.Middlewares;
@@ -8,6 +8,8 @@ var configuration = builder.Configuration;
 
 builder.Services.AddInfrastructure(configuration);
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<SmtpSettings>(settings => configuration.GetSection("SmtpSettings").Bind(settings));
 
 var app = builder.Build();
 

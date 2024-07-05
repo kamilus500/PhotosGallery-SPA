@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using PhotosGallerySPA.Domain.Configs;
 using PhotosGallerySPA.Infrastructure.Persistance;
 using PhotosGallerySPA.Infrastructure.Services;
 using PhotosGallerySPA.Infrastructure.Services.Interfaces;
@@ -32,6 +33,7 @@ namespace PhotosGallerySPA.Infrastructure.Extensions
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISessionService, SessionService>();
             services.AddScoped<IErrorService, ErrorService>();
+            services.AddTransient<IEmailService, EmailService>();
         }
     }
 }

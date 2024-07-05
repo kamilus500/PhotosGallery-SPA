@@ -7,10 +7,8 @@ namespace PhotosGallerySPA.Infrastructure.Services
     public class ErrorService : IErrorService
     {
         private readonly ApplicationDbContext _dbContext;
-        public ErrorService(ApplicationDbContext dbContext)
-        {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        }
+        public ErrorService(ApplicationDbContext dbContext) 
+            => _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
         public async Task Create(ErrorTable error)
         {

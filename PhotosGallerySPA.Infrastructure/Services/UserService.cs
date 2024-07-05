@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PhotosGallerySPA.Domain.Dtos.User;
 using PhotosGallerySPA.Infrastructure.Extensions;
+using PhotosGallerySPA.Infrastructure.Helpers;
 using PhotosGallerySPA.Infrastructure.Persistance;
 using PhotosGallerySPA.Infrastructure.Services.Interfaces;
 
@@ -11,29 +12,37 @@ namespace PhotosGallerySPA.Infrastructure.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ISessionService _sessionService;
-        public UserService(ApplicationDbContext dbContext, ISessionService sessionService)
+        private readonly IEmailService _emailService;
+        public UserService(ApplicationDbContext dbContext, ISessionService sessionService, IEmailService emailService)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
         public async Task<bool> Login(LoginRegisterDto loginRegisterDto)
         {
+            try
+            {
+                var user = await _dbContext.Users
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(x => x.Email == loginRegisterDto.Email);
 
-            var user = await _dbContext.Users
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(x => x.Email == loginRegisterDto.Email);
+                if (user == null)
+                    throw new ArgumentNullException(nameof(user));
 
-            if (user == null)
-                throw new ArgumentNullException(nameof(user));
+                if (!PasswordHelper.VerifyPassword(loginRegisterDto.Password, user.PasswordHashed))
+                    return false;
 
-            if (!PasswordHelper.VerifyPassword(loginRegisterDto.Password, user.PasswordHashed))
+                _sessionService.SetValue("UserId", user.Id);
+                _sessionService.SetValue("UserFullName", $"{user.FirstName} {user.LastName}");
+
+                return true;
+            }
+            catch(Exception ex)
+            {
                 return false;
-
-            _sessionService.SetValue("UserId", user.Id);
-            _sessionService.SetValue("UserFullName", $"{user.FirstName} {user.LastName}");
-
-            return true;
+            }
         }
 
         public async Task Logout()
@@ -43,17 +52,25 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
         public async Task<bool> Register(LoginRegisterDto loginRegisterDto)
         {
-            var user = loginRegisterDto.MapToUser();
+            try
+            {
+                var user = loginRegisterDto.MapToUser();
 
-            if (user == null)
-                throw new ArgumentNullException(nameof(user));
+                if (user == null)
+                    throw new ArgumentNullException(nameof(user));
 
-            user.PasswordHashed = PasswordHelper.HashPassword(loginRegisterDto.Password);
+                user.PasswordHashed = PasswordHelper.HashPassword(loginRegisterDto.Password);
 
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.Users.AddAsync(user);
+                await _dbContext.SaveChangesAsync();
 
-            return true;
+                await _emailService.Send(loginRegisterDto.Email, "Pomyślna rejestracja", EmailContents.ConfirmationMessage);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

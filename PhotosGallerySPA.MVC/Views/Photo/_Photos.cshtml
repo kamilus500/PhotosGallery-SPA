@@ -12,14 +12,14 @@
         {
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img data-bs-toggle="modal" data-bs-target="#imageModal" src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" class="card-img-top img-thumbnail fixed-size" alt="@photo.Title" />
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" class="card-img-top img-thumbnail fixed-size" alt="@photo.Title" />
                     <div class="card-body">
                         <h5 class="card-title">@photo.Title</h5>
                         <p class="card-text">@photo.Description</p>
                     </div>
                 </div>
                 <div class="card-footer text-center">
-                    <a class="btn btn-outline-danger btn-sm">Remove</a>
+                    <a class="btn btn-outline-danger btn-sm" onclick="loadConfirmation('Czy napewno chcesz usunac zdjecie ?','/Photo/_Photos','/Photo/DeletePhoto','@photo.Id')">Remove</a>
                 </div>
             </div>
         }

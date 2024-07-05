@@ -15,3 +15,23 @@ function hideModal() {
     let modalBackground = document.querySelector('.modal-backdrop.fade.show');
     modalBackground.remove();
 }
+
+function loadConfirmation(message, pathUrl, actionUrl = null, data = null) {
+    
+    if (confirm(message)) {
+        if (actionUrl) {
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function () {
+                    loadPartial(pathUrl);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+}

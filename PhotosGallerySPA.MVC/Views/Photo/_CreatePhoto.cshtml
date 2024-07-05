@@ -38,21 +38,15 @@
         createPhoto.append('Image', $('#Image')[0].files[0]);
         createPhoto.append('UserId', $('#UserId').val());
 
-        console.log(createPhoto);
-
         $.ajax({
             url: '/Photo/CreatePhoto',
             type: 'POST',
             processData: false,
             contentType: false,
             data: createPhoto,
-            success: function (result) {
-                if (result === true) {
-                    hideModal();
-                    loadPartial('/Photo/_Photos');
-                } else {
-                    alert('Cos poszlo nie tak');
-                }
+            success: function () {
+                hideModal();
+                loadPartial('/Photo/_Photos');
             },
             error: function (xhr, status, error) {
                 console.error('Error:', error);

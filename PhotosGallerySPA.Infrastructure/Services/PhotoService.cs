@@ -17,36 +17,54 @@ namespace PhotosGallerySPA.Infrastructure.Services
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
         }
 
-        public async Task CreatePhoto(CreatePhotoDto photo)
+        public async Task<bool> CreatePhoto(CreatePhotoDto photo)
         {
-            var newPhoto = new Photo()
+            try
             {
-                CreationDate = DateTime.UtcNow,
-                Description = photo.Description,
-                Title = photo.Title,
-                UserId = photo.UserId,
-                Id = Guid.NewGuid().ToString()
-            };
+                var newPhoto = new Photo()
+                {
+                    CreationDate = DateTime.UtcNow,
+                    Description = photo.Description,
+                    Title = photo.Title,
+                    UserId = photo.UserId,
+                    Id = Guid.NewGuid().ToString()
+                };
 
-            if (newPhoto is null)
-                throw new ArgumentNullException(nameof(newPhoto));
+                if (newPhoto is null)
+                    throw new ArgumentNullException(nameof(newPhoto));
 
-            newPhoto.Image = await photo.Image.ToByteArrayAsync();
+                newPhoto.Image = await photo.Image.ToByteArrayAsync();
 
-            await _dbContext.Photos.AddAsync(newPhoto);
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.Photos.AddAsync(newPhoto);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
 
-        public async Task DeletePhoto(string id)
+        public async Task<bool> DeletePhoto(string id)
         {
-            var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (photo is null)
-                throw new ArgumentNullException(nameof(photo));
+                if (photo is null)
+                    throw new ArgumentNullException(nameof(photo));
 
-            photo.IsDeleted = true;
+                photo.IsDeleted = true;
 
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
 
         public async Task<PhotoDto> GetPhoto(string id)

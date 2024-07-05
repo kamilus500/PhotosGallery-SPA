@@ -8,8 +8,8 @@ namespace PhotosGallerySPA.Infrastructure.Services.Interfaces
 
         Task<PhotoDto> GetPhoto(string id);
 
-        Task CreatePhoto(CreatePhotoDto photo);
+        Task<bool> CreatePhoto(CreatePhotoDto photo);
 
-        Task DeletePhoto(string id);
+        Task<bool> DeletePhoto(string id);
     }
 }
