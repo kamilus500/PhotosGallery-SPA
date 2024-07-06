@@ -53,7 +53,7 @@
                                     <h1>Pomyślna Rejestracja</h1>
                                     <p>Dziękujemy za rejestrację! Twoje konto zostało pomyślnie utworzone.</p>
                                     <p>Zaloguj się teraz, aby uzyskać dostęp do wszystkich funkcji.</p>
-                                    <a href=""http://localhost:8080"" class=""button"">Zaloguj się</a>
+                                    <a href=""https://lanowy-service.hostingasp.pl"" class=""button"">Zaloguj się</a>
                                 </div>
                             </body>
                             </html>";

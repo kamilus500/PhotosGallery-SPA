@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using PhotosGallerySPA.Domain.Dtos.Photo;
 using PhotosGallerySPA.Domain.Entities;
 using PhotosGallerySPA.Infrastructure.Extensions;
@@ -10,11 +11,13 @@ namespace PhotosGallerySPA.Infrastructure.Services
     public class PhotoService : IPhotoService
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IMemoryCache _memoryCache;
         private readonly ISessionService _sessionService;
-        public PhotoService(ApplicationDbContext dbContext, ISessionService sessionService)
+        public PhotoService(ApplicationDbContext dbContext, ISessionService sessionService, IMemoryCache memoryCache)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
         public async Task<bool> CreatePhoto(CreatePhotoDto photo)
@@ -38,6 +41,8 @@ namespace PhotosGallerySPA.Infrastructure.Services
                 await _dbContext.Photos.AddAsync(newPhoto);
                 await _dbContext.SaveChangesAsync();
 
+                _memoryCache.Remove("getphotos");
+
                 return true;
             }
             catch(Exception ex)
@@ -59,6 +64,8 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
                 await _dbContext.SaveChangesAsync();
 
+                _memoryCache.Remove("getphotos");
+
                 return true;
             }
             catch(Exception ex)
@@ -69,26 +76,53 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
         public async Task<PhotoDto> GetPhoto(string id)
         {
-            var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
+            var cacheKey = $"getphoto-{id}";
+            if (!_memoryCache.TryGetValue(cacheKey, out PhotoDto photoDto))
+            {
 
-            return photo.MapToPhotoDto();
+                var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
+
+                photoDto = photo.MapToPhotoDto();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                    SlidingExpiration = TimeSpan.FromMinutes(2)
+                };
+
+                _memoryCache.Set(cacheKey, photoDto, cacheEntryOptions);
+            }
+
+            return photoDto;
         }
 
         public async Task<IEnumerable<PhotoDto>> GetPhotos()
         {
             var userId = _sessionService.GetValue("UserId");
 
-            var photos = await _dbContext.Photos
-                                            .Where(x => x.UserId == userId && !x.IsDeleted)
-                                            .Include(x => x.User)
-                                            .AsNoTracking()
-                                            .ToListAsync();
-
-            var photosDto = new List<PhotoDto>();
-
-            foreach (var photo in photos)
+            var cacheKey = $"getphotos";
+            if (!_memoryCache.TryGetValue(cacheKey, out List<PhotoDto> photosDto))
             {
-                photosDto.Add(photo.MapToPhotoDto());
+                var photos = await _dbContext.Photos
+                                .Where(x => x.UserId == userId && !x.IsDeleted)
+                                .Include(x => x.User)
+                                .AsNoTracking()
+                                .ToListAsync();
+
+                photosDto = new List<PhotoDto>();
+
+                foreach (var photo in photos)
+                {
+                    photosDto.Add(photo.MapToPhotoDto());
+                }
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                    SlidingExpiration = TimeSpan.FromMinutes(2)
+                };
+
+                _memoryCache.Set(cacheKey, photosDto, cacheEntryOptions);
             }
 
             return photosDto;

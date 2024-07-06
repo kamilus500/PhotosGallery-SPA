@@ -19,8 +19,15 @@ html {
 
 body {
   margin-bottom: 60px;
+  overflow: auto !important;
 }
 
 a {
     cursor: pointer;
+}
+
+.fixed-size {
+    width: 100%;
+    height: 20rem; 
+    object-fit: cover;
 }
