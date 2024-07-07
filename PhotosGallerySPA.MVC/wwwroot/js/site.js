@@ -1,4 +1,6 @@
-﻿function loadPartial(pathUrl, data = null) {
+﻿let closeEventClass = 'close-event';
+let xlModalClass = 'modal-xl';
+function loadPartial(pathUrl, data = null) {
     $('#loading-spinner').show();
 
     $('main').load(pathUrl, data, function () {
@@ -10,6 +12,26 @@ function loadPartialInModal(pathUrl) {
     $.get(pathUrl).done(function (data) {
         $('.modal-body').html(data);
     });
+}
+
+function loadImageModal(data) {
+
+    //Change size
+    $('.modal-dialog').addClass(xlModalClass);
+
+    //Add image
+    let htmlresult = `<img src="data:image/jpeg;base64,${data}" class="full-image"/>`; 
+    $('.modal-body').html(htmlresult);
+
+    //event after click close button
+    $('.modal-header .btn-close').addClass(closeEventClass);
+}
+
+function cleanImageModalClasses() {
+    if ($(closeEventClass)) {
+        $('.modal-header .btn-close').removeClass(closeEventClass);
+        $('.modal-dialog').removeClass(xlModalClass);
+    }
 }
 
 function hideModal() {

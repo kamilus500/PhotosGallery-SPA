@@ -12,7 +12,7 @@
         {
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" class="card-img-top img-thumbnail fixed-size" alt="@photo.Title" />
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" class="card-img-top img-thumbnail fixed-size" alt="@photo.Title" data-bs-toggle="modal" data-bs-target="#globalModal" onclick="loadImageModal('@Convert.ToBase64String(photo.Image)')" />
                     <div class="card-body">
                         <h5 class="card-title">@photo.Title</h5>
                         <p class="card-text">@photo.Description</p>
