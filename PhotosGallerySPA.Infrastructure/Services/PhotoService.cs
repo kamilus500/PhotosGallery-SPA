@@ -109,12 +109,7 @@ namespace PhotosGallerySPA.Infrastructure.Services
                                 .AsNoTracking()
                                 .ToListAsync();
 
-                photosDto = new List<PhotoDto>();
-
-                foreach (var photo in photos)
-                {
-                    photosDto.Add(photo.MapToPhotoDto());
-                }
+                photosDto = photos.MapToPhotoDtoList();
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions
                 {

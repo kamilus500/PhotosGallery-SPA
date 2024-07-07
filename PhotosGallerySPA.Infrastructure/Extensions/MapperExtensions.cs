@@ -6,6 +6,9 @@ namespace PhotosGallerySPA.Infrastructure.Extensions
 {
     public static class MapperExtensions
     {
+        public static List<PhotoDto> MapToPhotoDtoList(this List<Photo> photos)
+            => photos.Select(photo => photo.MapToPhotoDto()).ToList();
+
         public static PhotoDto MapToPhotoDto(this Photo photo)
             => new PhotoDto()
             {
