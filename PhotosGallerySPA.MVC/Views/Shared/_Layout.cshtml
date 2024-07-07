@@ -10,6 +10,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
 </head>
 <body>
+    <div id="loading-spinner" style="display: none;">
+        <img src="~/icons/spinner.gif" alt="Loading..." />
+    </div>
+
     <main role="main" class="pb-3">
         @RenderBody()
     </main>

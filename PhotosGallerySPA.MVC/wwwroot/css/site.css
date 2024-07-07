@@ -31,3 +31,17 @@ a {
     height: 20rem; 
     object-fit: cover;
 }
+
+#loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: none;
+}
+
+#loading-spinner img {
+    width: 15rem;
+    height: 15rem;
+}

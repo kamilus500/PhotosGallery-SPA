@@ -1,5 +1,9 @@
 ﻿function loadPartial(pathUrl, data = null) {
-    $('main').load(pathUrl, data);
+    $('#loading-spinner').show();
+
+    $('main').load(pathUrl, data, function () {
+        $('#loading-spinner').hide();
+    });
 }
 
 function loadPartialInModal(pathUrl) {
