@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using PhotosGallerySPA.Domain.Dtos.Photo;
 using PhotosGallerySPA.Domain.Entities;
@@ -21,11 +20,11 @@ namespace PhotosGallerySPA.Infrastructure.Services
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
-        public async Task<bool> CreatePhoto(CreatePhotoDto photo)
+        public async Task<bool> CreatePhoto(CreatePhotoDto photo, string rootPath)
         {
             try
             {
-                var path = Path.Combine("C:\\Projekty\\PhotosGallerySPA\\PhotosGallerySPA.MVC\\wwwroot\\images\\", $"{photo.Image.FileName}");
+                var path = Path.Combine($"{rootPath}\\images", $"{photo.Image.FileName}");
 
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
