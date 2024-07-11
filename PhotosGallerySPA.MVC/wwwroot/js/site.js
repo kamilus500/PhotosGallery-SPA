@@ -17,20 +17,22 @@ function loadPartialInModal(pathUrl) {
 function loadImageModal(data) {
 
     //Change size
-    $('.modal-dialog').addClass(xlModalClass);
+    //$('.modal-dialog').addClass(xlModalClass);
 
     //Add image
     let htmlresult = `<img src="data:image/jpeg;base64,${data}" class="full-image"/>`; 
     $('.modal-body').html(htmlresult);
 
     //event after click close button
-    $('.modal-header .btn-close').addClass(closeEventClass);
+    //$('.modal-header .btn-close').addClass(closeEventClass);
 }
 
 function cleanImageModalClasses() {
     if ($(closeEventClass)) {
-        $('.modal-header .btn-close').removeClass(closeEventClass);
-        $('.modal-dialog').removeClass(xlModalClass);
+        setTimeout(function () {
+            $('.modal-header .btn-close').removeClass(closeEventClass);
+            $('.modal-dialog').removeClass(xlModalClass);
+        }, 700)
     }
 }
 

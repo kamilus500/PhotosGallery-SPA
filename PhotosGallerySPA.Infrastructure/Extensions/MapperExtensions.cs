@@ -15,8 +15,8 @@ namespace PhotosGallerySPA.Infrastructure.Extensions
                 Id = photo.Id,
                 CreationDate = photo.CreationDate,
                 Description = photo.Description,
-                Image = photo.Image,
                 Title = photo.Title,
+                Image = File.ReadAllBytes(photo.FileName),
                 UserId = photo.UserId,
                 FullName = $"{photo.User.FirstName} {photo.User.LastName}"
             };
@@ -27,7 +27,6 @@ namespace PhotosGallerySPA.Infrastructure.Extensions
                 Id = photoDto.Id,
                 CreationDate = photoDto.CreationDate,
                 Description = photoDto.Description,
-                Image = photoDto.Image,
                 Title = photoDto.Title,
                 UserId = photoDto.UserId
             };

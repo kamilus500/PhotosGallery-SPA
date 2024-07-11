@@ -32,7 +32,7 @@
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(loginRegisterDto),
-            success: function (result) {
+            success: async function (result) {
                 if (result === true) {
                     hideModal();
                     loadPartial('/Home/_Index');

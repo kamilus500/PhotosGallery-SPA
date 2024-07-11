@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using PhotosGallerySPA.Domain.Dtos.Photo;
 using PhotosGallerySPA.Domain.Entities;
@@ -24,19 +25,22 @@ namespace PhotosGallerySPA.Infrastructure.Services
         {
             try
             {
+                var path = Path.Combine("C:\\Projekty\\PhotosGallerySPA\\PhotosGallerySPA.MVC\\wwwroot\\images\\", $"{photo.Image.FileName}");
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await photo.Image.CopyToAsync(stream);
+                }
+
                 var newPhoto = new Photo()
                 {
                     CreationDate = DateTime.UtcNow,
                     Description = photo.Description,
                     Title = photo.Title,
+                    FileName = path,
                     UserId = photo.UserId,
                     Id = Guid.NewGuid().ToString()
                 };
-
-                if (newPhoto is null)
-                    throw new ArgumentNullException(nameof(newPhoto));
-
-                newPhoto.Image = await photo.Image.ToByteArrayAsync();
 
                 await _dbContext.Photos.AddAsync(newPhoto);
                 await _dbContext.SaveChangesAsync();
@@ -68,7 +72,7 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
