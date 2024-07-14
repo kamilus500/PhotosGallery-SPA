@@ -24,7 +24,17 @@ namespace PhotosGallerySPA.Infrastructure.Services
         {
             try
             {
-                var path = Path.Combine($"{rootPath}\\images", $"{photo.Image.FileName}");
+                var fileName = $"{photo.Image.FileName}_{DateTime.UtcNow}";
+
+                fileName = fileName.Replace(".jpg", "");
+
+                fileName = fileName.Replace(' ', '_');
+
+                fileName = fileName.Replace(':', '_');
+
+                fileName += ".jpg";
+
+                var path = Path.Combine($"{rootPath}\\images", $"{ fileName }");
 
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
@@ -54,7 +64,7 @@ namespace PhotosGallerySPA.Infrastructure.Services
             }
         }
 
-        public async Task<bool> DeletePhoto(string id)
+        public async Task<bool> DeletePhoto(string id, string rootPath)
         {
             try
             {
@@ -66,6 +76,10 @@ namespace PhotosGallerySPA.Infrastructure.Services
                 photo.IsDeleted = true;
 
                 await _dbContext.SaveChangesAsync();
+
+                var path = Path.Combine($"{rootPath}\\images", $"{photo.FileName}");
+
+                File.Delete(path);
 
                 _memoryCache.Remove("getphotos");
 

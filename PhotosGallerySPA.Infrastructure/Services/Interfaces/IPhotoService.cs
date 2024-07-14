@@ -10,6 +10,6 @@ namespace PhotosGallerySPA.Infrastructure.Services.Interfaces
 
         Task<bool> CreatePhoto(CreatePhotoDto photo, string rootPath);
 
-        Task<bool> DeletePhoto(string id);
+        Task<bool> DeletePhoto(string id, string rootPath);
     }
 }

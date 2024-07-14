@@ -28,6 +28,6 @@ namespace PhotosGallerySPA.MVC.Controllers
 
         [HttpPost]
         public async Task<bool> DeletePhoto([FromBody] string id)
-            => await _photoService.DeletePhoto(id);
+            => await _photoService.DeletePhoto(id, _webHostEnvironment.WebRootPath);
     }
 }
