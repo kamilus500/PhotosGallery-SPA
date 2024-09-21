@@ -16,15 +16,9 @@ function loadPartialInModal(pathUrl) {
 
 function loadImageModal(data) {
 
-    //Change size
-    //$('.modal-dialog').addClass(xlModalClass);
-
     //Add image
     let htmlresult = `<img src="data:image/jpeg;base64,${data}" class="full-image"/>`; 
     $('.modal-body').html(htmlresult);
-
-    //event after click close button
-    //$('.modal-header .btn-close').addClass(closeEventClass);
 }
 
 function cleanImageModalClasses() {
@@ -45,7 +39,6 @@ function hideModal() {
 }
 
 function loadConfirmation(message, pathUrl, actionUrl = null, data = null) {
-    
     if (confirm(message)) {
         if (actionUrl) {
             $.ajax({

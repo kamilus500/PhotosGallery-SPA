@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using PhotosGallerySPA.MVC.Models;
-using System.Diagnostics;
 
 namespace PhotosGallerySPA.MVC.Controllers
 {

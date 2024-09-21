@@ -20,6 +20,7 @@ namespace PhotosGallerySPA.MVC.Controllers
             => PartialView("_Login");
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<bool> Login([FromBody] LoginRegisterDto loginRegisterDto)
             => await _userService.Login(loginRegisterDto);
 
@@ -27,6 +28,7 @@ namespace PhotosGallerySPA.MVC.Controllers
             => PartialView("_Register");
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<bool> Register([FromBody] LoginRegisterDto loginRegisterDto)
             => await _userService.Register(loginRegisterDto);
     }

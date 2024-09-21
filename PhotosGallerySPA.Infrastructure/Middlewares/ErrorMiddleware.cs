@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using PhotosGallerySPA.Domain.Entities;
+using PhotosGallerySPA.Infrastructure.Extensions;
 using PhotosGallerySPA.Infrastructure.Services.Interfaces;
 
 namespace PhotosGallerySPA.Infrastructure.Middlewares
@@ -25,7 +26,7 @@ namespace PhotosGallerySPA.Infrastructure.Middlewares
                 {
                     Id = Guid.NewGuid().ToString(),
                     StackTrace = ex.StackTrace.ToString(),
-                    CreationDate = DateTime.UtcNow,
+                    CreationDate = DateTimeProvider.DateNowUtc,
                     Exception = ex.Message.ToString()
                 };
 

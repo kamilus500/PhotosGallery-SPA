@@ -43,7 +43,7 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
                 var newPhoto = new Photo()
                 {
-                    CreationDate = DateTime.UtcNow,
+                    CreationDate = DateTimeProvider.DateNowUtc,
                     Description = photo.Description,
                     Title = photo.Title,
                     FileName = path,

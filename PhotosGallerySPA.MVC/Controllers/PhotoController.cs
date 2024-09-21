@@ -23,6 +23,7 @@ namespace PhotosGallerySPA.MVC.Controllers
             => PartialView("_CreatePhoto");
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<bool> CreatePhoto([FromForm] CreatePhotoDto createPhotoDto) 
             => await _photoService.CreatePhoto(createPhotoDto, _webHostEnvironment.WebRootPath);
 
