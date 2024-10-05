@@ -4,9 +4,9 @@ namespace PhotosGallerySPA.Infrastructure.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<bool> Login(LoginRegisterDto loginRegisterDto);
+        Task<(bool, string)> Login(LoginRegisterDto loginRegisterDto);
 
-        Task<bool> Register(LoginRegisterDto loginRegisterDto);
+        Task<(bool, string)> Register(LoginRegisterDto loginRegisterDto);
 
         Task Logout();
     }

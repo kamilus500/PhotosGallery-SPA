@@ -48,11 +48,11 @@
                 'RequestVerificationToken': token
             },
             success: async function (result) {
-                if (result === true) {
+                if (result.result === true) {
                     hideModal();
                     loadPartial('/Home/_Index');
                 } else {
-                    alert('Cos poszlo nie tak');
+                    alert(result.message);
                 }
             },
             error: function (xhr, status, error) {

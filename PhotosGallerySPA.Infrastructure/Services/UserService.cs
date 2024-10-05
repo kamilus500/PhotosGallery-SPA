@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using PhotosGallerySPA.Domain.Dtos.User;
+using PhotosGallerySPA.Domain.Entities;
 using PhotosGallerySPA.Infrastructure.Extensions;
 using PhotosGallerySPA.Infrastructure.Helpers;
 using PhotosGallerySPA.Infrastructure.Persistance;
@@ -13,14 +14,16 @@ namespace PhotosGallerySPA.Infrastructure.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly ISessionService _sessionService;
         private readonly IEmailService _emailService;
-        public UserService(ApplicationDbContext dbContext, ISessionService sessionService, IEmailService emailService)
+        private readonly IErrorService _errorService;
+        public UserService(ApplicationDbContext dbContext, ISessionService sessionService, IEmailService emailService, IErrorService errorService)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            _errorService = errorService ?? throw new ArgumentNullException(nameof(errorService));
         }
 
-        public async Task<bool> Login(LoginRegisterDto loginRegisterDto)
+        public async Task<(bool, string)> Login(LoginRegisterDto loginRegisterDto)
         {
             try
             {
@@ -29,19 +32,26 @@ namespace PhotosGallerySPA.Infrastructure.Services
                                             .FirstOrDefaultAsync(x => x.Email == loginRegisterDto.Email);
 
                 if (user == null)
-                    throw new ArgumentNullException(nameof(user));
+                    return (false, "User with this email doesn't exist");
 
                 if (!PasswordHelper.VerifyPassword(loginRegisterDto.Password, user.PasswordHashed))
-                    return false;
+                    return (false, "Password is not okey");
 
                 _sessionService.SetValue("UserId", user.Id);
                 _sessionService.SetValue("UserFullName", $"{user.FirstName} {user.LastName}");
 
-                return true;
+                return (true, "Register successfully");
             }
             catch(Exception ex)
             {
-                return false;
+                await _errorService.Create(new ErrorTable
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    StackTrace = ex.StackTrace.ToString(),
+                    CreationDate = DateTimeProvider.DateNowUtc,
+                    Exception = ex.Message.ToString()
+                });
+                return (false, "Something goes wrong");
             }
         }
 
@@ -50,7 +60,7 @@ namespace PhotosGallerySPA.Infrastructure.Services
             _sessionService.Clear();
         }
 
-        public async Task<bool> Register(LoginRegisterDto loginRegisterDto)
+        public async Task<(bool, string)> Register(LoginRegisterDto loginRegisterDto)
         {
             try
             {
@@ -65,11 +75,19 @@ namespace PhotosGallerySPA.Infrastructure.Services
                 await _dbContext.SaveChangesAsync();
 
                 await _emailService.Send(loginRegisterDto.Email, "Pomyślna rejestracja", EmailContents.ConfirmationMessage);
-                return true;
+
+                return (true, "Register successfully");
             }
             catch(Exception ex)
             {
-                return false;
+                await _errorService.Create(new ErrorTable
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    StackTrace = ex.StackTrace.ToString(),
+                    CreationDate = DateTimeProvider.DateNowUtc,
+                    Exception = ex.Message.ToString()
+                });
+                return (false, "Something goes wrong");
             }
         }
     }

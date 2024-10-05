@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PhotosGallerySPA.Domain.Dtos.Global;
 using PhotosGallerySPA.Domain.Dtos.User;
 using PhotosGallerySPA.Infrastructure.Services.Interfaces;
 
@@ -21,15 +22,22 @@ namespace PhotosGallerySPA.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<bool> Login([FromBody] LoginRegisterDto loginRegisterDto)
-            => await _userService.Login(loginRegisterDto);
+        public async Task<ResultDto> Login([FromBody] LoginRegisterDto loginRegisterDto)
+        {
+            var (result, message) = await _userService.Login(loginRegisterDto);
+            return new ResultDto { Message = message, Result = result };
+        }
 
         public IActionResult _Register()
             => PartialView("_Register");
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<bool> Register([FromBody] LoginRegisterDto loginRegisterDto)
-            => await _userService.Register(loginRegisterDto);
+        public async Task<ResultDto> Register([FromBody] LoginRegisterDto loginRegisterDto)
+        {
+            var (result, message) = await _userService.Register(loginRegisterDto);
+
+            return new ResultDto { Message = message, Result = result };
+        }
     }
 }
