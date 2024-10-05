@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PhotosGallerySPA.Domain.Dtos.Global;
 using PhotosGallerySPA.Domain.Dtos.Photo;
 using PhotosGallerySPA.Infrastructure.CustomAttributes;
 using PhotosGallerySPA.Infrastructure.Services.Interfaces;
@@ -24,11 +25,17 @@ namespace PhotosGallerySPA.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<bool> CreatePhoto([FromForm] CreatePhotoDto createPhotoDto) 
-            => await _photoService.CreatePhoto(createPhotoDto, _webHostEnvironment.WebRootPath);
+        public async Task<ResultDto> CreatePhoto([FromForm] CreatePhotoDto createPhotoDto)
+        {
+            var (result, message) = await _photoService.CreatePhoto(createPhotoDto, _webHostEnvironment.WebRootPath);
+            return new ResultDto { Message = message, Result = result };
+        }
 
         [HttpPost]
-        public async Task<bool> DeletePhoto([FromBody] string id)
-            => await _photoService.DeletePhoto(id, _webHostEnvironment.WebRootPath);
+        public async Task<ResultDto> DeletePhoto([FromBody] string id)
+        {
+            var (result, message) = await _photoService.DeletePhoto(id, _webHostEnvironment.WebRootPath);
+            return new ResultDto { Message = message, Result = result };
+        }
     }
 }

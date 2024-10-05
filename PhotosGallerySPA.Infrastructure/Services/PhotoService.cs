@@ -13,14 +13,16 @@ namespace PhotosGallerySPA.Infrastructure.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly IMemoryCache _memoryCache;
         private readonly ISessionService _sessionService;
-        public PhotoService(ApplicationDbContext dbContext, ISessionService sessionService, IMemoryCache memoryCache)
+        private readonly IErrorService _errorService;
+        public PhotoService(ApplicationDbContext dbContext, ISessionService sessionService, IMemoryCache memoryCache, IErrorService errorService)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _errorService = errorService ?? throw new ArgumentException(nameof(errorService));
         }
 
-        public async Task<bool> CreatePhoto(CreatePhotoDto photo, string rootPath)
+        public async Task<(bool, string)> CreatePhoto(CreatePhotoDto photo, string rootPath)
         {
             try
             {
@@ -56,22 +58,29 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
                 _memoryCache.Remove("getphotos");
 
-                return true;
+                return (true, string.Empty);
             }
             catch(Exception ex)
             {
-                return false;
+                await _errorService.Create(new ErrorTable
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    StackTrace = ex.StackTrace.ToString(),
+                    CreationDate = DateTimeProvider.DateNowUtc,
+                    Exception = ex.Message.ToString()
+                });
+                return (false, "Something goes wrong");
             }
         }
 
-        public async Task<bool> DeletePhoto(string id, string rootPath)
+        public async Task<(bool, string)> DeletePhoto(string id, string rootPath)
         {
             try
             {
                 var photo = await _dbContext.Photos.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (photo is null)
-                    throw new ArgumentNullException(nameof(photo));
+                    return (false, "Photo doesnt exist");
 
                 photo.IsDeleted = true;
 
@@ -83,11 +92,18 @@ namespace PhotosGallerySPA.Infrastructure.Services
 
                 _memoryCache.Remove("getphotos");
 
-                return true;
+                return (true, string.Empty);
             }
             catch (Exception ex)
             {
-                return false;
+                await _errorService.Create(new ErrorTable
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    StackTrace = ex.StackTrace.ToString(),
+                    CreationDate = DateTimeProvider.DateNowUtc,
+                    Exception = ex.Message.ToString()
+                });
+                return (false, "Something goes wrong");
             }
         }
 
