@@ -25,6 +25,7 @@ namespace PhotosGallerySPA.MVC.Controllers
         public async Task<ResultDto> Login([FromBody] LoginRegisterDto loginRegisterDto)
         {
             var (result, message) = await _userService.Login(loginRegisterDto);
+            ModelState.Clear();
             return new ResultDto { Message = message, Result = result };
         }
 
@@ -36,7 +37,7 @@ namespace PhotosGallerySPA.MVC.Controllers
         public async Task<ResultDto> Register([FromBody] LoginRegisterDto loginRegisterDto)
         {
             var (result, message) = await _userService.Register(loginRegisterDto);
-
+            ModelState.Clear();
             return new ResultDto { Message = message, Result = result };
         }
     }

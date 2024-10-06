@@ -28,6 +28,7 @@ namespace PhotosGallerySPA.MVC.Controllers
         public async Task<ResultDto> CreatePhoto([FromForm] CreatePhotoDto createPhotoDto)
         {
             var (result, message) = await _photoService.CreatePhoto(createPhotoDto, _webHostEnvironment.WebRootPath);
+            ModelState.Clear();
             return new ResultDto { Message = message, Result = result };
         }
 
@@ -35,6 +36,7 @@ namespace PhotosGallerySPA.MVC.Controllers
         public async Task<ResultDto> DeletePhoto([FromBody] string id)
         {
             var (result, message) = await _photoService.DeletePhoto(id, _webHostEnvironment.WebRootPath);
+            ModelState.Clear();
             return new ResultDto { Message = message, Result = result };
         }
     }
